@@ -1,0 +1,24 @@
+CREATE TABLE Tasks (
+id INT PRIMARY KEY IDENTITY,
+doDate DATE,
+doTime TIME,
+repeats VARCHAR(100),
+title VARCHAR(100),
+summary VARCHAR(300),
+done BIT,
+doneDate DATE,
+doneTime TIME
+);
+
+CREATE TABLE Users (
+id INT PRIMARY KEY IDENTITY,
+userName VARCHAR(50),
+);
+
+CREATE TABLE TaskAssignments (
+taskId INT,
+userId INT,
+PRIMARY KEY (taskId, userId),
+FOREIGN KEY (taskId) REFERENCES Tasks(id) ON DELETE CASCADE,
+FOREIGN KEY (userId) REFERENCES Users(id) ON DELETE CASCADE
+);
