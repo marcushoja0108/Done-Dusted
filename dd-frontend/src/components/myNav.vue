@@ -1,5 +1,5 @@
 <template>
-    <nav class="navbar navbar-expand-md navbar-light rounded border border-primary  shadow-sm m-4">
+    <nav class="navbar navbar-expand-md navbar-light rounded border border-primary bg-light shadow-sm m-4">
         <div class="container-xl d-flex justify-content-between align-items-center">
             <a href="#" class="navbar-brand d-flex align-items-center text-primary fw-bold">
                 <span class="fw-bold text-primary">
