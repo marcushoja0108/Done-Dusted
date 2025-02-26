@@ -5,8 +5,8 @@
     </div>
     <div class="card-body">
         <h5 class="card-title">{{ task.title }}</h5>
-        <p class="card-text">Date: {{ shortDate }}</p>
-        <p class="card-text">Time: {{ shortTime }}</p>
+        <p class="card-text"><strong>Date: </strong>{{ shortDate }}</p>
+        <p class="card-text"><strong>Time: </strong>{{ shortTime }}</p>
     </div>
     <div class="card-footer text-body-secondary">
       <a href="#" class="btn btn-primary" @click="toggleModal">Details</a>
