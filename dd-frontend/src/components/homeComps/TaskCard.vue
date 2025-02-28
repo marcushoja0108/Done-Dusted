@@ -14,18 +14,19 @@
 </div>
 
 <CardDetailsModal v-if="showModal" :task="task" :showModal="toggleModal" 
-:shortDate="shortDate" :shortTime="shortTime" @close="toggleModal"/>
+@close="toggleModal" @task-updated="refreshTask"/>
 </template>
 
 <script>
-import CardDetailsModal from './CardDetailsModal.vue';
+import CardDetailsModal from '../homeComps/CardDetailsModal.vue';
 import {ref, computed} from 'vue'
 export default {
-    props: ['task'],
+    name: 'TaskCard',
     components: {CardDetailsModal},
+    props: ['task'],
     setup(props){
         const shortDate = computed(() => {
-            if(!props.task?.doDate) return "";
+            if(!props.task.doDate) return "";
 
             return new Date(props.task.doDate).toLocaleDateString(undefined, {
                 year: "numeric",
@@ -35,7 +36,7 @@ export default {
         });
         
         const shortTime = computed(() => {
-            if(!props.task?.doTime) return "";
+            if(!props.task.doTime) return "";
 
             return new Date(`2000-01-01T${props.task.doTime}`).toLocaleTimeString(undefined, {
                 hour: "2-digit",
@@ -50,8 +51,11 @@ export default {
             showModal.value = !showModal.value
         }
 
+        const refreshTask = async (updatedTask) => {
+            props.task = updatedTask
+        }
 
-        return {showModal, toggleModal, shortDate, shortTime}
+        return {showModal, toggleModal, shortDate, shortTime, refreshTask}
     },
 }
 </script>

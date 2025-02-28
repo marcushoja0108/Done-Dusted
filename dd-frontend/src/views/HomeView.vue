@@ -1,7 +1,7 @@
 <template>
     <div class="row row-cols-md-4 g-5 justify-content-center">
       
-        <div v-for="task in myTasks" :key="task.id"
+        <div v-for="task in tasks" :key="task.id"
         class="col-8 col-lg-5 col-md-8 col-sm-8 m-2 my-5">
           <TaskCard :task="task"/>
         </div>
@@ -10,7 +10,7 @@
 </template>
 
 <script>
-import TaskCard from '@/components/TaskCard.vue';
+import TaskCard from '@/components/homeComps/TaskCard.vue';
 import {onMounted, ref, inject} from 'vue';
 import axios from 'axios';
 
@@ -22,21 +22,20 @@ export default {
   
   setup(){
     const loggedInUserId = inject('loggedInUserId')
-    const myTasks= ref([]);
+    const tasks= ref([]);
 
     const getTasks = async () => {
       try {
         if(!loggedInUserId) return;
         const response = await axios.get(`http://localhost:5118/D&D/tasks/${loggedInUserId}`)
-        console.log(response.data)
-        myTasks.value = response.data;
+        tasks.value = response.data;
       }
       catch(error){
         console.error(error)
       }
     }
     onMounted(getTasks);
-    return { myTasks }
+    return { tasks, getTasks }
   }
 }
 </script>

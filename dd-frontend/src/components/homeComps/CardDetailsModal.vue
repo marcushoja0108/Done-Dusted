@@ -33,8 +33,9 @@
                             </li>
                         </ul>
                     </div>
-                    <div class="d-flex justify-content-center-mt-3">
-                        <button class="btn btn-info" @click="editMode = !editMode">Edit task</button>
+                    <div class="d-flex justify-content-between mt-3 fw-bold">
+                        <button class="btn btn-primary" @click="editMode = !editMode">Edit task</button>
+                        <button class="btn btn-success">Mark as Done</button>
                     </div>
                 </div>
                 
@@ -44,17 +45,17 @@
                         <div class="row">
                             <div class="col-6">
                                 <label class="fw-bold">Date </label>
-                                <input v-model="updatedTask.date" class="form-control" type="Date"> 
+                                <input v-model="task.doDate.split('T')[0]" class="form-control" type="Date"> 
                             </div>
                             <div class="col-6">
                                 <label class="fw-bold">Time </label>
-                                <input v-model="updatedTask.time" class="form-control" type="Time">                    
+                                <input v-model="task.doTime" class="form-control" type="Time">                    
                             </div>
                         </div>
                     </div>
                     <div class="mb-3">
                         <label class="fw-bold">Repeats</label>
-                            <select v-model="updatedTask.repeats" class="form-select" aria-label="Repeats select">
+                            <select v-model="task.repeats" class="form-select" aria-label="Repeats select">
                                 <option value="None">None</option>
                                 <option value="Daily">Daily</option>
                                 <option value="Weekly">Weekly</option>
@@ -63,7 +64,7 @@
                     </div>
                     <div class="mb-3">
                         <label>Summary</label>
-                        <textarea class="form-control" v-model="updatedTask.summary"></textarea>
+                        <textarea class="form-control" v-model="task.summary"></textarea>
                     </div>
                     <div class="mb-3">
                         <label>Assign users</label>
@@ -88,61 +89,86 @@
 </template>
 
 <script>
-import {onMounted, ref, watch} from 'vue'
+import {onMounted, ref, watch, computed} from 'vue'
 import axios from 'axios'
 
 export default {
-    props: ['task', 'showModal', 'shortDate', 'shortTime'],
-    emits: ['close'],
+    name: 'CardDetailsModal',
+    props: ['task', 'showModal'],
+    emits: ['close', 'task-updated'],
     setup(props, {emit}){
+        console.log(props.task)
+        if(!props.task){
+            console.error("No task passed")
+            return
+        }
         const editMode = ref(false);
         const taskUsers = ref([]);
         const allUsers = ref([]);
 
         const updatedTask = ref({
-            date: '',
-            time: '',
-            repeats: '',
-            summary: '',
+            ...props.task,
             assignedUsers: [],
-        })
+        });
+
+        const shortDate = computed(() => {
+            if(!props.task.doDate) return "";
+
+            return new Date(props.task.doDate).toLocaleDateString(undefined, {
+                year: "numeric",
+                month: "short",
+                day: "numeric",
+            });
+        });
+        
+        const shortTime = computed(() => {
+            if(!props.task.doTime) return "";
+
+            return new Date(`2000-01-01T${props.task.doTime}`).toLocaleTimeString(undefined, {
+                hour: "2-digit",
+                minute: "2-digit",
+                hour12: false,
+            });
+        });
 
         const saveChanges = async () => {
             try{
-                if(!props.task) return;
+                if(!updatedTask.value) return;
                 if(!updatedTask.value.assignedUsers){
                     console.log('users required');
-                    return} 
+                    return;} 
                 
                 const updatedTaskData = {
-                    doDate: updatedTask.value.date || null,
-                    doTime: updatedTask.value.time || null,
+                    doDate: updatedTask.value.doDate || null,
+                    doTime: updatedTask.value.doTime || null,
                     title: props.task.title,
                     repeats: updatedTask.value.repeats || null,
                     summary: updatedTask.value.summary || null,
                 }
-                const response = await axios.put(`http://localhost:5118/D&D/tasks/${props.task.id}`, updatedTaskData);
+
+                await axios.put(`http://localhost:5118/D&D/tasks/${props.task.id}`, updatedTaskData);
                 console.log('Task updated!')
+
+                emit('task-updated', updatedTask.value);
+
                 editMode.value = false;
             }
             catch(error){
                 console.log(error)
             }
         }
-        console.log(props.task)
 
         watch(() => props.task, (newTask) => {
             if(newTask) {
                 updatedTask.value = {
-                    date: newTask.doDate ? newTask.doDate.split('T')[0] : '',
-                    time: newTask.doTime,
+                    doDate: newTask.doDate ? newTask.doDate.split('T')[0] : '',
+                    doTime: newTask.doTime,
                     repeats: newTask.repeats,
                     summary: newTask.summary,
-                    // mapper bare til bruker id, hvs ikke det er brukere blir det tomt array
-                    assignedUsers: newTask.assignedUsers ? newTask.assignedUsers.map(user => user.id) : []
-                }
+                    // mapper bare til bruker id, hvis ikke det er brukere blir det tomt array
+                    assignedUsers: newTask.assignedUsers ? newTask.assignedUsers.map(user => user.id) : [],
+                };
             }
-            console.log(newTask.doDate)
         }, {immediate: true});
 
         const getTaskUsers = async () => {
@@ -169,10 +195,13 @@ export default {
         const closeModal = () => {
             emit('close');
         }
+        
+        onMounted(() => {
+            getTaskUsers();
+            getAllUsers();
+        })
 
-        onMounted(getTaskUsers)
-        onMounted(getAllUsers)
-        return {closeModal, taskUsers, editMode, allUsers, updatedTask, saveChanges}
+        return {closeModal, task: props.task, shortDate, shortTime, taskUsers, editMode, allUsers, updatedTask, saveChanges}
     }
 }
 </script>
