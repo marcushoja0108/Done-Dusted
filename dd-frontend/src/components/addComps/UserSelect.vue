@@ -7,7 +7,8 @@
                     placeholder="Search for user">
                 </li>
                 <li v-for="user in filteredUsers" :key="user.id" class="list-group-item">
-                    <input type="checkbox" class="form-check-input me-3" :id="'userCheckbox' + user.id">
+                    <input type="checkbox" class="form-check-input me-3" :id="'userCheckbox' + user.id"
+                    :value="user" v-model="selectedUsers" @change="emitSelectedUsers">
                     <label :for="'userCheckbox' + user.id" class="form-check-label"> {{ user.userName }}</label>
                 </li>
             </ul>
@@ -21,11 +22,17 @@ import axios from 'axios'
 
 export default {
     name: 'usersSelect',
-    setup(){
+    props: {assignedUsers: {
+            type: Array,
+            default: () => []
+        },
+    },
+    setup(props, {emit}){
 
         const allUsers = ref([])
         const userFilter = ref()
         const filteredUsers = ref([])
+        const selectedUsers = ref(props.assignedUsers || [])
 
         const getAllUsers = async () => {
             try{
@@ -43,9 +50,13 @@ export default {
             user.userName.toLowerCase().includes(userFilter.value.toLowerCase()));
         }
 
+        const emitSelectedUsers = () => {
+            emit('update:assignedUsers', selectedUsers.value)
+        }
+
         onMounted(getAllUsers);
 
-        return { allUsers, userFilter, filterUsers, filteredUsers }
+        return { allUsers, userFilter, filterUsers, filteredUsers, selectedUsers, emitSelectedUsers }
     }
 }
 </script>
