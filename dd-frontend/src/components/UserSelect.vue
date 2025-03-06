@@ -3,13 +3,18 @@
         <div class="text-start">
             <ul class="list-group">
                 <li class="list-group-item lead">
-                    <input type="text" class="form-control" v-model="userFilter" @input="filterUsers"
+                    <input type="text" class="form-control" v-model="userFilter" 
+                    @input="filterUsers"
                     placeholder="Search for user">
                 </li>
                 <li v-for="user in filteredUsers" :key="user.id" class="list-group-item">
-                    <input type="checkbox" class="form-check-input me-3" :id="'userCheckbox' + user.id"
-                    :value="user" v-model="selectedUsers" @change="emitSelectedUsers">
-                    <label :for="'userCheckbox' + user.id" class="form-check-label"> {{ user.userName }}</label>
+                    <input type="checkbox" class="form-check-input me-3" 
+                    :id="'userCheckbox' + user.id"
+                    :value="user.id" 
+                    v-model="selectedUserIds" 
+                    @change="emitSelectedUsers">
+                    <label :for="'userCheckbox' + user.id" 
+                    class="form-check-label"> {{ user.userName }}</label>
                 </li>
             </ul>
         </div>
@@ -17,22 +22,23 @@
 </template>
 
 <script>
-import {onMounted, ref} from 'vue'
+import {onMounted, ref, watch} from 'vue'
 import axios from 'axios'
 
 export default {
-    name: 'usersSelect',
+    name: 'UserSelect',
     props: {assignedUsers: {
             type: Array,
-            default: () => []
+            default: () => [],
         },
     },
     setup(props, {emit}){
 
-        const allUsers = ref([])
-        const userFilter = ref()
-        const filteredUsers = ref([])
-        const selectedUsers = ref(props.assignedUsers || [])
+        const allUsers = ref([]);
+        const userFilter = ref();
+        const filteredUsers = ref([]);
+        const selectedUserIds = ref([...props.assignedUsers]);
+        console.log(props.assignedUsers)
 
         const getAllUsers = async () => {
             try{
@@ -41,7 +47,7 @@ export default {
                 filteredUsers.value = allUsers.value;
             }
             catch(error){
-                console.error(error)
+                console.error("Error getting user", error)
             }
         }
 
@@ -51,12 +57,16 @@ export default {
         }
 
         const emitSelectedUsers = () => {
-            emit('update:assignedUsers', selectedUsers.value)
+            emit('update:assignedUsers', selectedUserIds.value)
         }
+
+        watch(() => props.assignedUsers, (newUsers) => {
+            selectedUserIds.value = [...newUsers];
+        })
 
         onMounted(getAllUsers);
 
-        return { allUsers, userFilter, filterUsers, filteredUsers, selectedUsers, emitSelectedUsers }
+        return { allUsers, userFilter, filterUsers, filteredUsers, selectedUserIds, emitSelectedUsers }
     }
 }
 </script>
