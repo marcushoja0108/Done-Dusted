@@ -1,6 +1,6 @@
 <template>
     <div v-if="showModal" class="modal fade show" tabindex="-1" 
-    aria-labelledby="CardDetailsModalLabel" aria-hidden="true" style="display: block">
+    aria-labelledby="CardDetailsModalLabel" style="display: block">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header bg-primary text-white">
@@ -12,7 +12,6 @@
                 <CardDetailsView v-if="!editMode" 
                 :task="task" 
                 @edit="editMode = true"
-                @closeModal="closeModal"
                 @showToast="showToastMessage"/>
 
                 <CardDetailsEdit v-if="editMode" 
@@ -24,11 +23,12 @@
     </div>
     <div v-if="showModal" class="modal-backdrop fade show"></div>
 
-    <div class="toast-container position-fixed top-0 end-0 p-3" 
-    style="z-index: 1050" id="toast-container">
-        <div v-if="toastMessage" class="toast fade show" role="alert" 
+    <div class="toast-container position-fixed bottom-0 end-0 p-3" 
+    style="z-index: 1050;" id="toast-container">
+        <div v-if="toastMessage" class="toast show bg-success text-white p-4 w-100 p-4 fs-5" 
+        role="alert" 
         aria-live="assertive" aria-atomic="true">
-            <div class="toast-body">
+            <div class="toast-body fw-bold">
                 {{ toastMessage }}
             </div>
         </div>
@@ -78,12 +78,9 @@ export default {
 
         const showToastMessage = (message) => {
             toastMessage.value = message;
-            const toastEl = document.getElementById('toast-container').lastElementChild;
-            const toast = new bootstrap.Toast(toastEl);
-            toast.show();
-            setTimeout(() => {
-                toastMessage.value = null;
-            }, 3000);
+                setTimeout(() => {
+                    toastMessage.value = null;
+                }, 3000);
         }
         
         onMounted(() => {

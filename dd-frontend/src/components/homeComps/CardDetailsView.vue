@@ -82,7 +82,6 @@ export default {
             if(props.task.done) return;
             try{
                 await axios.put(`http://localhost:5118/D&D/tasks/done/${props.task.id}`);
-                emit('closeModal');
                 emit('showToast', 'Task marked as done!');
             }
             catch(error){
