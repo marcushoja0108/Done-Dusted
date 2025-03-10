@@ -24,7 +24,7 @@
                 </li>
             </ul>
         </div>
-        <div class="d-flex justify-content-between mt-3 fw-bold">
+        <div v-if="!task.done" class="d-flex justify-content-between mt-3 fw-bold">
             <button class="btn btn-primary" @click="$emit('edit')"> 
                 <i class="bi bi-pencil-square"></i> 
                 Edit task</button>

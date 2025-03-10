@@ -3,6 +3,7 @@ import HomeView from '../views/HomeView.vue'
 import AddTaskView from '../views/AddTaskView.vue'
 import CompletedTasksView from '../views/CompletedTasksView.vue'
 import RepeatingTasksView from '../views/RepeatingTasksView.vue'
+import LoginView from '@/views/LoginView.vue'
 
 const routes = [
   {
@@ -24,6 +25,11 @@ const routes = [
     path: '/completedTasks',
     name: 'completedTasks',
     component: CompletedTasksView
+  },
+  {
+    path: '/login',
+    name: 'login',
+    component: LoginView
   }
   
 ]

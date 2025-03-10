@@ -1,12 +1,14 @@
 <template>
-  
-  <myNav/>
+  <div v-if="loggedInUserId">
+    <myNav/>
+  </div>
   <router-view/>
 </template>
 
 <script>
-import {provide} from 'vue';
+import {provide, ref, onMounted} from 'vue';
 import myNav from './components/myNav.vue';
+import { useRouter } from 'vue-router';
 
 export default {
   name: 'App',
@@ -14,8 +16,22 @@ export default {
     myNav
   },
   setup(){
-    const loggedInUserId = 1;
-    provide('loggedInUserId', loggedInUserId);
+    const loggedInUserId = ref(null);
+    const router = useRouter();
+
+    
+    onMounted(() => {
+      const pHUserId = 1;
+
+      if(pHUserId){
+        loggedInUserId.value = pHUserId;
+        provide('loggedInUserId', loggedInUserId.value);
+      }
+      else{
+        router.push('/login');
+      }
+      console.log(loggedInUserId.value)
+    });
 
     return { loggedInUserId }
   }
