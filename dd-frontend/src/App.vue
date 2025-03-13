@@ -1,12 +1,15 @@
 <template>
   <div v-if="loggedInUserId">
     <myNav/>
+    <router-view/>
   </div>
-  <router-view/>
+  <div v-else>
+    <router-view @user-logged-in="handleLogin"/>
+  </div>
 </template>
 
 <script>
-import {provide, ref, onMounted} from 'vue';
+import { ref, } from 'vue';
 import myNav from './components/myNav.vue';
 import { useRouter } from 'vue-router';
 
@@ -19,21 +22,41 @@ export default {
     const loggedInUserId = ref(null);
     const router = useRouter();
 
+    const parseJwt = (token) =>  {
+      try{
+        return JSON.parse(atob(token.split('.')[1]));
+      }
+      catch(error){
+        return null;
+      }
+    }
     
-    onMounted(() => {
-      const pHUserId = 1;
+    const checkAuth = () => {
+      const token = localStorage.getItem("jwt");
 
-      if(pHUserId){
-        loggedInUserId.value = pHUserId;
-        provide('loggedInUserId', loggedInUserId.value);
-      }
-      else{
-        router.push('/login');
-      }
-      console.log(loggedInUserId.value)
-    });
+      if(token) {
+        const userData = parseJwt(token)
+        loggedInUserId.value = userData?.nameidentifier || null;
 
-    return { loggedInUserId }
+      } else{
+          router.push('/login');
+          console.log('No token detected, redirected to login.');
+        }
+      };
+
+      const handleLogin = () => {
+        checkAuth();
+      };
+
+      // kanskje ikke nødvendig
+      // watch(() => localStorage.getItem("jwt"), () => {
+      //   checkAuth
+      // });
+      
+    checkAuth();
+
+
+    return { loggedInUserId, handleLogin }
   }
   
 }

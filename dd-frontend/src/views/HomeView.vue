@@ -1,17 +1,16 @@
 <template>
-    <div class="row row-cols-md-4 g-5 justify-content-center">
-      
+    <div v-if="upcomingTasks.length > 0" class="row row-cols-md-4 g-5 justify-content-center">
         <div v-for="task in upcomingTasks" :key="task.id"
         class="col-8 col-lg-5 col-md-8 col-sm-8 m-2 my-5">
           <TaskCard :task="task"/>
         </div>
-      
     </div>
+    <div v-else>No tasks to show</div>
 </template>
 
 <script>
 import TaskCard from '@/components/TaskCard.vue';
-import {onMounted, ref, inject} from 'vue';
+import {onMounted, ref} from 'vue';
 import axios from 'axios';
 
 
@@ -21,12 +20,14 @@ export default {
   components: {TaskCard},
   
   setup(){
-    const loggedInUserId = inject('loggedInUserId')
+    const loggedInUserId = localStorage.getItem("userId")
     const upcomingTasks= ref([]);
 
     const getTasks = async () => {
+      if(!loggedInUserId) return;
       try {
         if(!loggedInUserId) return;
+
         const response = await axios.get(`http://localhost:5118/D&D/tasks/${loggedInUserId}`)
         const allUserTasks = response.data;
         upcomingTasks.value = allUserTasks.filter(task => !task.done)
