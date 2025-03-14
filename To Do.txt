@@ -1,10 +1,5 @@
-** Fiks funksjonalitet med endring av "assigned users"
-** Error handling på API requests
+
 *  Refactor og trekk ut egne komponenter
-
-login page
-jwt token for at brukere ikke må logge inn hver gang
-
 
 Bugs
 - hvis man velger ny date før ny time vil date nullstille seg igjen. Må velge time først.
@@ -12,5 +7,3 @@ Bugs
 
 Sett opp flyt diagram
 draw.io 
-
-se på UML diagram for programmering og Figma etter dette prosjektet
