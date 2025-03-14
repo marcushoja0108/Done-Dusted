@@ -19,7 +19,7 @@
 </template>
 
 <script>
-import {inject, ref, onMounted} from 'vue'
+import { ref, onMounted} from 'vue'
 import TaskCard from '@/components/TaskCard.vue'
 import axios from 'axios'
 
@@ -27,8 +27,8 @@ export default {
   name: 'CompletedTasks',
   components: { TaskCard },
   setup(){
-    const loggedInUserId = inject('loggedInUserId')
-    const completedUserTasks = ref([])
+    const loggedInUserId = localStorage.getItem("userId");
+    const completedUserTasks = ref([]);
 
     const getCompletedTasks = async () => {
       try{

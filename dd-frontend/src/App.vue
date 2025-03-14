@@ -1,6 +1,6 @@
 <template>
   <div v-if="loggedInUserId">
-    <myNav/>
+    <myNav @log-out="handleLogout"/>
     <router-view/>
   </div>
   <div v-else>
@@ -9,7 +9,7 @@
 </template>
 
 <script>
-import { ref, } from 'vue';
+import { ref, watch } from 'vue';
 import myNav from './components/myNav.vue';
 import { useRouter } from 'vue-router';
 
@@ -30,15 +30,24 @@ export default {
         return null;
       }
     }
+
+    const checkExpiration = (token) => {
+      const decoded = parseJwt(token);
+      if(!decoded || !decoded.exp) return true;
+
+      const currentTime = Math.floor(Date.now() / 1000);
+      return decoded.exp < currentTime;
+     }
     
     const checkAuth = () => {
       const token = localStorage.getItem("jwt");
 
-      if(token) {
-        const userData = parseJwt(token)
-        loggedInUserId.value = userData?.nameidentifier || null;
+      if(token && !checkExpiration(token)) {
+        loggedInUserId.value = localStorage.getItem("userId");
+        router.push('/');
 
       } else{
+        localStorage.removeItem("jwt");
           router.push('/login');
           console.log('No token detected, redirected to login.');
         }
@@ -48,15 +57,16 @@ export default {
         checkAuth();
       };
 
-      // kanskje ikke nødvendig
-      // watch(() => localStorage.getItem("jwt"), () => {
-      //   checkAuth
-      // });
+      const handleLogout = () => {
+        loggedInUserId.value = null;
+        checkAuth();
+      }
+
       
     checkAuth();
 
 
-    return { loggedInUserId, handleLogin }
+    return { loggedInUserId, handleLogin, handleLogout }
   }
   
 }

@@ -5,7 +5,8 @@
           <TaskCard :task="task"/>
         </div>
     </div>
-    <div v-else>No tasks to show</div>
+    <!-- <div v-else-if="upcomingTasks.length == 0">No tasks to show</div> -->
+    <div v-else>Loading tasks</div>
 </template>
 
 <script>
@@ -20,7 +21,7 @@ export default {
   components: {TaskCard},
   
   setup(){
-    const loggedInUserId = localStorage.getItem("userId")
+    const loggedInUserId = localStorage.getItem("userId");
     const upcomingTasks= ref([]);
 
     const getTasks = async () => {
@@ -30,6 +31,7 @@ export default {
 
         const response = await axios.get(`http://localhost:5118/D&D/tasks/${loggedInUserId}`)
         const allUserTasks = response.data;
+        
         upcomingTasks.value = allUserTasks.filter(task => !task.done)
       }
       catch(error){

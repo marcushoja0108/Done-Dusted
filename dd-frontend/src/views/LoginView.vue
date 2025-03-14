@@ -6,8 +6,11 @@
             <h2 class="text-white">Done & Dusted</h2>
             <img src="../assets/largeLogo.png" alt="MainLogo" class="img-fluid mb-3 rounded">
         </div>
-        <loginInputs v-if="!signUp" />
-        <signupInputs v-else/>
+        <div class="col text-center" v-if="!signUp">
+          <loginInputs @user-logged-in="$emit('user-logged-in')" v-if="!signUp" />
+          <button class="btn btn-info" @click="signUp=!signUp">Sign up</button>
+        </div>
+        <signupInputs @cancelSignup="signUp=false" v-else/>
     </div>
   </div>
 </div>

@@ -147,7 +147,6 @@ export default {
               axios.post(`http://localhost:5118/D&D/tasks/${taskId}/user/${user.id}`),
             )
           )
-          console.log(response.data)
         }
         showToast()
         resetValues()

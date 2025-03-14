@@ -10,13 +10,14 @@
         <input type="password" class="form-control" placeholder="Repeat your password">
     </div>
     <div class="m-2 d-flex justify-content-evenly">
-        <button class="btn btn-danger" @click="signUp=!signUp">Cancel</button>
+        <button class="btn btn-danger" @click="$emit('cancelSignup')">Cancel</button>
         <button class="btn btn-success">Register</button>
     </div>
 </div>
 </template>
 
 <script>
+import { ref } from 'vue'
 export default {
     name: 'signupInputs',
 
@@ -27,7 +28,7 @@ export default {
         secondPassword: '',
         });
 
-        return {  }
+        return { signUpInput }
     }
 }
 </script>

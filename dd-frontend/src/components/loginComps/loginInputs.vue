@@ -16,22 +16,21 @@
         v-model="loginInput.Password">
     </div>
     <div class="m-2 d-flex justify-content-evenly">
-        <button class="btn btn-info" @click="signUp=!signUp">Sign up</button>
+        
         <button class="btn btn-success" @click="login">Login</button>
     </div>
 </div>
 </template>
 
 <script>
-import { ref, defineEmits } from 'vue'
-import { useRouter } from 'vue-router'
+import { ref } from 'vue'
 import axios from 'axios'
 
 export default {
     name: 'loginInputs',
+    emits: ['user-logged-in'],
 
     setup(_, { emit }){
-        const router = useRouter();
         let errorMessage = ref();
         const loginInput = ref({
         UserName: '',
@@ -64,8 +63,6 @@ export default {
                 localStorage.setItem("userId", userId);
 
                 emit('user-logged-in');
-
-                router.push('/');
             }
             catch(error){
                 errorMessage.value = "Wrong username or password";

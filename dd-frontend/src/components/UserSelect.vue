@@ -38,7 +38,6 @@ export default {
         const userFilter = ref();
         const filteredUsers = ref([]);
         const selectedUserIds = ref([...props.assignedUsers]);
-        console.log(props.assignedUsers)
 
         const getAllUsers = async () => {
             try{

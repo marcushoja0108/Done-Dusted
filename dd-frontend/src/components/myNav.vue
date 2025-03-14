@@ -30,21 +30,21 @@
                     </li>
                 </ul>
             </div>
-            <button class="btn btn danger" @click="logOut">Log out</button>
+            <button class="btn btn-danger fw-bold" @click="logOut">Log out</button>
         </div>
     </nav>
 </template>
 
 <script>
-import { useRouter } from 'vue-router'
 export default {
-    setup() {
-        const router = useRouter();
+    name: 'myNav',
+    emits: ['log-out'],
+    setup(_, { emit }) {
 
         const logOut = () => {
             localStorage.removeItem("jwt");
             localStorage.removeItem("userId");
-            router.push('/login');
+            emit('log-out')
         }
 
         return { logOut }
