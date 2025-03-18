@@ -24,7 +24,7 @@
                 </li>
             </ul>
         </div>
-        <div v-if="!task.done" class="d-flex justify-content-between mt-3 fw-bold">
+        <div v-if="!task.done && !task.missed" class="d-flex justify-content-between mt-3 fw-bold">
             <button class="btn btn-primary" @click="$emit('edit')"> 
                 <i class="bi bi-pencil-square"></i> 
                 Edit task</button>
@@ -62,7 +62,11 @@ export default {
         
         const shortDate = computed(() => {
             if(!props.task.doDate) return "";
-            return new Date(props.task.doDate).toLocaleDateString(undefined, {
+            let dateToChange = props.task.doDate;
+
+            if(props.task.doneDate) dateToChange = props.task.doneDate;
+            
+            return new Date(dateToChange).toLocaleDateString(undefined, {
                 year: "numeric",
                 month: "short",
                 day: "numeric",
@@ -71,7 +75,11 @@ export default {
 
         const shortTime = computed(() => {
             if(!props.task.doTime) return "";
-            return new Date(`2000-01-01T${props.task.doTime}`).toLocaleTimeString(undefined, {
+            let timeToChange = props.task.doTime;
+
+            if(props.task.doneTime) timeToChange = props.task.doneTime;
+
+            return new Date(`2000-01-01T${timeToChange}`).toLocaleTimeString(undefined, {
                 hour: "2-digit",
                 minute: "2-digit",
                 hour12: false,

@@ -3,7 +3,12 @@
     aria-labelledby="CardDetailsModalLabel" style="display: block">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
-                <div class="modal-header bg-primary text-white">
+                <div v-if="!task.done" class="modal-header bg-primary text-white">
+                    <h5 class="modal-title" id="CardDetailsModalLabel">{{ task.title }}</h5>
+                    <button type="button" class="btn-close btn-light" 
+                    @click="closeModal" aria-label="Close"></button>
+                </div>
+                <div v-else class="modal-header bg-success text-white">
                     <h5 class="modal-title" id="CardDetailsModalLabel">{{ task.title }}</h5>
                     <button type="button" class="btn-close btn-light" 
                     @click="closeModal" aria-label="Close"></button>

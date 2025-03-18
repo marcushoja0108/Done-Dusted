@@ -28,9 +28,11 @@
                         <router-link :to="{ name: 'completedTasks' }" class="nav-link fw-bold">
                             <i class="bi bi-card-checklist"></i> Completed tasks</router-link>
                     </li>
+                    <li>
+                        <button class="btn btn-danger fw-bold" @click="logOut">Log out</button>
+                    </li>
                 </ul>
             </div>
-            <button class="btn btn-danger fw-bold" @click="logOut">Log out</button>
         </div>
     </nav>
 </template>

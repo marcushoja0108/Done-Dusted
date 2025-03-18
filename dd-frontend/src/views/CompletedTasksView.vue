@@ -1,7 +1,7 @@
 <template>
   <div class="row m-5 justify-content-around text-center">
-    <div class="col">
-      <label class="fw-bold fs-4 mb-2">Tasks Completed</label>
+    <div class="col-5 col-sm-6 col-lg-4">
+      <label class="fw-bold fs-4 mb-3">Tasks Completed</label>
       <p class="lead">Total {{ completedUserTasks.length }}</p>
         <div class="row g-4">
           <div v-for="task in completedUserTasks" :key="task.id">
@@ -9,11 +9,14 @@
           </div>
         </div>
     </div>
-    <div class="col">
-      <label class="fw-bold fs-4">Missed tasks</label>
-    </div>
-    <div class="col">
-      <label class="fw-bold fs-4">Assigned tasks</label>
+    <div class="col-5 col-sm-6 col-lg-4">
+      <label class="fw-bold fs-4 mb-3">Missed tasks</label>
+      <p class="lead">Total {{ missedUserTasks.length }}</p>
+        <div class="row g-4">
+          <div v-for="task in missedUserTasks" :key="task.id">
+            <TaskCard :task="task"/>
+          </div>
+        </div>
     </div>
   </div>
 </template>
@@ -29,6 +32,7 @@ export default {
   setup(){
     const loggedInUserId = localStorage.getItem("userId");
     const completedUserTasks = ref([]);
+    const missedUserTasks = ref([]);
 
     const getCompletedTasks = async () => {
       try{
@@ -41,8 +45,20 @@ export default {
       }
     }
 
+    const getMissedTasks = async () => {
+      try{
+        if(!loggedInUserId) return;
+        const response = await axios.get(`http://localhost:5118/D&D/tasks/missed/${loggedInUserId}`);
+        missedUserTasks.value = response.data;
+      }
+      catch(error){
+        console.error(error)
+      }
+    }
+
     onMounted(getCompletedTasks)
-    return{ completedUserTasks }
+    onMounted(getMissedTasks)
+    return{ completedUserTasks, missedUserTasks }
   }
 }
 </script>

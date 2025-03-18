@@ -1,21 +1,19 @@
 <template>
   <div class="card text-center">
-    <div v-if="!task.done" class="card-header">
+    <div v-if="!task.done && !task.missed" class="card-header">
         Upcoming task
     </div>
-    <div v-else class="card-header bg-success text-white fs-5 fw-bold">
+    <div v-else-if="task.done" class="card-header bg-success text-white fs-5 fw-bold">
         Finished task
     </div>
+    <div v-else-if="task.missed" class="card-header bg-danger text-white fs-5 fw-bold">
+        Missed task
+    </div>
 
-    <div v-if="!task.done" class="card-body">
+    <div class="card-body">
         <h5 class="card-title">{{ task.title }}</h5>
         <p class="card-text"><strong>Date: </strong>{{ shortDate }}</p>
         <p class="card-text"><strong>Time: </strong>{{ shortTime }}</p>
-    </div>
-    <div v-else>
-        <h5 class="card-title">{{ task.title }}</h5>
-        <p class="card-text"><strong>Date done: </strong>{{ shortDate }}</p>
-        <p class="card-text"><strong>Time done: </strong>{{ shortTime }}</p>
     </div>
     <div class="card-footer text-body-secondary">
       <a href="#" class="btn btn-primary" @click="toggleModal">Details</a>
@@ -36,13 +34,10 @@ export default {
     setup(props){
         const shortDate = computed(() => {
             if(!props.task.doDate) return "";
-            let dateToChange = '';
-            
-            if(!props.task.doneDate){
-                dateToChange = props.task.doDate
-            }
-            else{
-                dateToChange = props.task.doneDate
+            let dateToChange = props.task.doDate;
+
+            if(props.task.doneDate) {
+                dateToChange = props.task.doneDate;
             }
             return new Date(dateToChange).toLocaleDateString(undefined, {
                 year: "numeric",

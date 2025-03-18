@@ -50,14 +50,12 @@ export default {
                 localStorage.setItem("jwt", token);
 
                 const decodedToken = parseJwt(token);
-                console.log("Decoded token:", decodedToken)
                 if(!decodedToken){
                     console.error("Error: Unable to parse token");
                 }
 
                 const userId = decodedToken["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier"] 
                 || decodedToken.sub || decodedToken.userId || decodedToken.id;
-                console.log("Extracted user ID: ", userId)
                 if(!userId){ console.log("Error: userId not found in token")};
 
                 localStorage.setItem("userId", userId);

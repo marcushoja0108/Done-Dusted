@@ -33,10 +33,27 @@ export default {
         const allUserTasks = response.data;
         
         upcomingTasks.value = allUserTasks.filter(task => !task.done)
+        await getMissedTasks();
+        upcomingTasks.value = upcomingTasks.value.filter(task => !task.missed)
+        console.log(upcomingTasks)
       }
       catch(error){
         console.error(error)
       }
+    }
+
+    const getMissedTasks = async () => {
+      const today = Date.now();
+      const missedTasks = upcomingTasks.value.filter(task => {
+        const taskTime = new Date(task.doDate).getTime();
+        return taskTime < today;
+    });
+      console.log(missedTasks);
+      await Promise.all(
+        missedTasks.map(task => 
+          axios.put(`http://localhost:5118/D&D/tasks/missed/${task.id}`)
+        )
+      )
     }
     onMounted(getTasks);
     return { upcomingTasks, getTasks }

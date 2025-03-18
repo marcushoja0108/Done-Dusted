@@ -10,7 +10,7 @@
           <loginInputs @user-logged-in="$emit('user-logged-in')" v-if="!signUp" />
           <button class="btn btn-info" @click="signUp=!signUp">Sign up</button>
         </div>
-        <signupInputs @cancelSignup="signUp=false" v-else/>
+        <signupInputs @user-logged-in="$emit('user-logged-in')" @cancelSignup="signUp=false" v-else/>
     </div>
   </div>
 </div>
