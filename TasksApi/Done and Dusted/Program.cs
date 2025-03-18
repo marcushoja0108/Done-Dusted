@@ -95,6 +95,16 @@ app.MapGet("/D&D/tasks/{id}", async (int id) =>
     return Results.Ok(myTasks);
 });
 
+//get upcoming tasks based on user id
+app.MapGet("/D&D/tasks/upcoming/{id}", async (int id) =>
+{
+    var sql = @"SELECT * FROM Tasks T join TaskAssignments TA ON T.id = TA.taskId 
+                WHERE TA.userId = @id AND T.done IS NULL AND T.missed IS NULL";
+    await using var conn = new SqlConnection(connStr);
+    var myUpcomingTasks = await conn.QueryAsync(sql, new { id });
+    return Results.Ok(myUpcomingTasks);
+});
+
 //get completed tasks based on id
 app.MapGet("/D&D/tasks/completed/{id}", async (int id) =>
 {
@@ -166,6 +176,23 @@ app.MapPut("/D&D/tasks/{id}", async (int id, Tasks uT) =>
     return Results.Ok(rowsAffected);
 });
 
+//Helper for repeats
+DateTime GetNextTask(DateTime currentDate, string repeatType)
+{
+    DateTime date = currentDate;
+    switch (repeatType.ToLower())
+    {
+        case "daily":
+            return date.AddDays(1);
+        case "weekly":
+            return date.AddDays(7);
+        case "monthly":
+            return date.AddMonths(1);
+        default:
+            return date;
+    }
+}
+
 // mark task as done based on id
 app.MapPut("/D&D/tasks/done/{id}", async (int id) =>
 {
@@ -179,6 +206,37 @@ app.MapPut("/D&D/tasks/done/{id}", async (int id) =>
     
     await using var conn = new SqlConnection(connStr);
     var rowsAffected = await conn.ExecuteAsync(sql, new { id, done = true, doneDate, doneTime });
+
+    //deals with repeats, creates new task and assignments
+    var taskSql = "SELECT repeats, doDate, doTime, title, summary FROM Tasks WHERE id = @id";
+    var task = await conn.QueryFirstOrDefaultAsync<Tasks>(taskSql, new { id = id });
+
+    if (task != null && task.repeats != "None")
+    {
+        DateTime nextDate = GetNextTask(task.doDate, task.repeats);
+
+        var newTaskSql = @"INSERT INTO Tasks (title, doDate, doTime, repeats, summary)
+                           VALUES (@title, @doDate, @doTime, @repeats, @summary);
+                           SELECT CAST (SCOPE_IDENTITY() as int)";
+        var newTaskId = await conn.QuerySingleAsync<int>(newTaskSql, new
+        {
+            task.title,
+            doDate = nextDate,
+            task.doTime,
+            task.repeats,
+            task.summary
+        });
+        
+        var taskAssignmentsSql = "SELECT userId FROM TaskAssignments WHERE taskId = @taskId";
+        var userIds = await conn.QueryAsync<int>(taskAssignmentsSql, new { taskId = id });
+
+        foreach (var userId in userIds)
+        {
+            var insertAssignmentSql = "INSERT INTO TaskAssignments (taskId, userId) VALUES (@taskId, @userId)";
+            await conn.ExecuteAsync(insertAssignmentSql, new { taskId = newTaskId, userId });
+        }
+    }
+    
     return Results.Ok(rowsAffected);
 });
 
@@ -188,8 +246,38 @@ app.MapPut("/D&D/tasks/missed/{id}", async (int id) =>
     var sql = "UPDATE Tasks Set missed = 1 WHERE id = @id";
     await using var conn = new SqlConnection(connStr);
     var rowsAffected = await conn.ExecuteAsync(sql, new { id });
+
+    //deals with repeats, creates new task and assignments
+    var taskSql = "SELECT repeats, doDate, title, doTime, summary FROM Tasks WHERE id = @id";
+    var task = await conn.QueryFirstOrDefaultAsync<Tasks>(taskSql, new { id });
+
+    if (task != null && task.repeats != "None")
+    {
+        DateTime nextDate = GetNextTask(task.doDate, task.repeats);
+        var newTaskSql = @"INSERT INTO Tasks (title, doDate, doTime, repeats, summary)
+                           VALUES (@title, @doDate, @doTime, @repeats, @summary);
+                           SELECT CAST (SCOPE_IDENTITY() as int)";
+
+        var newTaskId = await conn.ExecuteAsync(newTaskSql, new
+        {
+            task.title,
+            doDate = nextDate.ToString("yyyy-MM-dd"),
+            task.doTime,
+            task.repeats,
+            task.summary
+        });
+        
+        var assignmentsSql = "SELECT userId FROM TaskAssignments WHERE taskId = @taskId";
+        var userIds = await conn.QueryAsync<int>(assignmentsSql, new { taskId = id });
+        foreach (var userId in userIds)
+        {
+            var insertAssignmentSql = "INSERT INTO TaskAssignments (taskId, userId) VALUES (@taskId, @userId)";
+            await conn.ExecuteAsync(insertAssignmentSql, new { taskId = newTaskId, userId });
+        }
+    }
     return Results.Ok(rowsAffected);
 });
+
 
 //Update password based on ID
 app.MapPut("/D&D/user/{id}", async (int id, Users u) =>

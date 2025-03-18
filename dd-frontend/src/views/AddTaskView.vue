@@ -141,10 +141,9 @@ export default {
 
         if(response.data){
           const taskId = response.data.id || response.data;
-          console.log("TaskId: ", taskId)
           await Promise.all(
             taskToAdd.value.assignedUsers.map(user => 
-              axios.post(`http://localhost:5118/D&D/tasks/${taskId}/user/${user.id}`),
+              axios.post(`http://localhost:5118/D&D/tasks/${taskId}/user/${user}`),
             )
           )
         }

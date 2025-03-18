@@ -1,27 +1,29 @@
 <template>
-  <div class="card text-center">
-    <div v-if="!task.done && !task.missed" class="card-header">
-        Upcoming task
+<div>
+    <div class="card text-center">
+        <div v-if="!task.done && !task.missed" class="card-header">
+            Upcoming task
+        </div>
+        <div v-else-if="task.done" class="card-header bg-success text-white fs-5 fw-bold">
+            Finished task
+        </div>
+        <div v-else-if="task.missed" class="card-header bg-danger text-white fs-5 fw-bold">
+            Missed task
+        </div>
+
+        <div class="card-body">
+            <h5 class="card-title">{{ task.title }}</h5>
+            <p class="card-text"><strong>Date: </strong>{{ shortDate }}</p>
+            <p class="card-text"><strong>Time: </strong>{{ shortTime }}</p>
+        </div>
+        <div class="card-footer text-body-secondary">
+        <a href="#" class="btn btn-primary" @click="toggleModal">Details</a>
     </div>
-    <div v-else-if="task.done" class="card-header bg-success text-white fs-5 fw-bold">
-        Finished task
-    </div>
-    <div v-else-if="task.missed" class="card-header bg-danger text-white fs-5 fw-bold">
-        Missed task
     </div>
 
-    <div class="card-body">
-        <h5 class="card-title">{{ task.title }}</h5>
-        <p class="card-text"><strong>Date: </strong>{{ shortDate }}</p>
-        <p class="card-text"><strong>Time: </strong>{{ shortTime }}</p>
-    </div>
-    <div class="card-footer text-body-secondary">
-      <a href="#" class="btn btn-primary" @click="toggleModal">Details</a>
-  </div>
+    <CardDetailsModal v-if="showModal" :task="task" :showModal="toggleModal" 
+    @close="toggleModal" @task-updated="refreshTask"/>
 </div>
-
-<CardDetailsModal v-if="showModal" :task="task" :showModal="toggleModal" 
-@close="toggleModal" @task-updated="refreshTask"/>
 </template>
 
 <script>

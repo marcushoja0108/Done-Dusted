@@ -1,12 +1,13 @@
 <template>
-  <div>
+<div class="text-center">
+  <div class="row m-5">
     <p class="fs-2">Daily tasks</p>
     <div v-if="dailyTasks.length > 0">
       <RepeatList :repeats="dailyTasks"/>
     </div>
     <div v-else>No current daily tasks</div>
   </div>
-  <div>
+  <div class="row m-5">
     <p class="fs-2">Weekly tasks</p>
     <div v-if="weeklyTasks.length > 0">
       <RepeatList :repeats="weeklyTasks"/>
@@ -15,7 +16,7 @@
       No current weekly tasks
     </div>
   </div>
-  <div>
+  <div class="row m-5">
     <p class="fs-2">Monthly tasks</p>
     <div v-if="monthlyTasks.length > 0">
       <RepeatList :repeats="monthlyTasks"/>
@@ -24,7 +25,7 @@
       No current monthly tasks
     </div>
   </div>
-  Repeating view
+</div>
 </template>
 
 <script>
@@ -46,12 +47,11 @@ export default {
     {
     if(!loggedInUserId) return;
     try{
-      const response = await axios.get(`http://localhost:5118/D&D/tasks/${loggedInUserId}`);
-      const allUserTasks = response.data;
-        const upcomingRepeats = allUserTasks.filter(task => !task.done || !task.missed);
-        dailyTasks.value = upcomingRepeats.filter(task => task.repeats == "Daily");
-        weeklyTasks.value = upcomingRepeats.filter(task => task.repeats == "Weekly");
-        monthlyTasks.value = upcomingRepeats.filter(task => task.repeats == "Monthly")
+      const response = await axios.get(`http://localhost:5118/D&D/tasks/upcoming/${loggedInUserId}`);
+      const allUpcomingTasks = response.data;
+        dailyTasks.value = allUpcomingTasks.filter(task => task.repeats == "Daily");
+        weeklyTasks.value = allUpcomingTasks.filter(task => task.repeats == "Weekly");
+        monthlyTasks.value = allUpcomingTasks.filter(task => task.repeats == "Monthly");
       }
     catch(error){
       console.error(error)

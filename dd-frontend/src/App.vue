@@ -9,7 +9,7 @@
 </template>
 
 <script>
-import { ref, watch } from 'vue';
+import { ref } from 'vue';
 import myNav from './components/myNav.vue';
 import { useRouter } from 'vue-router';
 
