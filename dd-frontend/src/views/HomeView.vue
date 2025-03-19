@@ -53,7 +53,6 @@ export default {
         )
       )
     }
-
     
     onMounted(getTasks);
     return { upcomingTasks, getTasks, errorMessage }

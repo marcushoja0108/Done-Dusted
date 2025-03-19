@@ -54,6 +54,7 @@ export default {
                     console.error("Error: Unable to parse token");
                 }
 
+                //gets spesifically id from payload
                 const userId = decodedToken["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier"] 
                 || decodedToken.sub || decodedToken.userId || decodedToken.id;
                 if(!userId){ console.log("Error: userId not found in token")};
@@ -64,11 +65,11 @@ export default {
             }
             catch(error){
                 errorMessage.value = "Wrong username or password";
-                console.log("Wrong username or password")
                 console.error(error);
             }
         };
 
+        //splits jwt and returns the payload
         const parseJwt = (token) => {
             try {
                 return JSON.parse(atob(token.split('.')[1]));

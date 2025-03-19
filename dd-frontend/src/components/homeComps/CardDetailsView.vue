@@ -1,5 +1,5 @@
 <template>
-  <div class="modal-body">
+  <div class="modal-body text-dark">
         <div class="mb-3">
             <div class="row">
                 <div class="col-6">

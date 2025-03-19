@@ -1,4 +1,5 @@
 <template>
+<div class="bg-dark text-white min-vh-100 d-flex flex-column">
   <div v-if="loggedInUserId">
     <myNav @log-out="handleLogout"/>
     <router-view/>
@@ -6,6 +7,7 @@
   <div v-else>
     <router-view @user-logged-in="handleLogin"/>
   </div>
+</div>
 </template>
 
 <script>
@@ -22,6 +24,7 @@ export default {
     const loggedInUserId = ref(null);
     const router = useRouter();
 
+    //all below checks if user has a non-expired jwt and redirects either to login or homepage
     const parseJwt = (token) =>  {
       try{
         return JSON.parse(atob(token.split('.')[1]));

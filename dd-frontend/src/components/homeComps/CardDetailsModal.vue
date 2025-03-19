@@ -64,7 +64,7 @@ export default {
                 try{
                     if(!props.task) return;
                 const response = await axios.get(`http://localhost:5118/D&D/users/${props.task.id}`);
-                props.task.assignedUsers = response.data
+                props.task.assignedUsers = response.data;
             }
             catch(error){
                 console.error('Error getting task users', error);

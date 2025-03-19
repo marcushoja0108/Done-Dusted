@@ -52,6 +52,7 @@ export default {
         task: Object,
     },
     setup(props, { emit }) {
+        //sets default values in inputs, also maps users to just their id's
         const updatedTask = ref({
             id: props.task.id,
             doDate: props.task.doDate,
@@ -116,6 +117,7 @@ export default {
                     )
                 )
 
+                //This emits the updated task to the taskUpdated function in parent. Also maps assignedusers id's to objects
                 emit('task-updated', {
                     ...updatedTask.value,
                     assignedUsers: newUsers.map(id => ({ id }))
@@ -123,7 +125,7 @@ export default {
 
             }
             catch(error){
-                console.log(error)
+                console.log(error);
             }
         };
 
@@ -134,7 +136,7 @@ export default {
 
         const cancelChanges = () => {
             updatedTask.value = { ...props.task };
-            emit('cancel')
+            emit('cancel');
         };
         
         return { updatedTask, checks, saveChanges, cancelChanges, formattedDate };

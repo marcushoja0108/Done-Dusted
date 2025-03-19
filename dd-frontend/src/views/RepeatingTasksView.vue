@@ -54,7 +54,7 @@ export default {
         monthlyTasks.value = allUpcomingTasks.filter(task => task.repeats == "Monthly");
       }
     catch(error){
-      console.error(error)
+      console.error(error);
     }
     }
 

@@ -31,7 +31,7 @@
       <div class="row">
         <div class="col">
           <div class="form-floating my-4">
-            <textarea class="form-control" style="height: 200px"
+            <textarea class="form-control pt-5" style="height: 200px"
             v-model="taskToAdd.summary"></textarea>
             <label class="fw-bold fs-5">Summary</label>
           </div>
@@ -88,15 +88,15 @@ export default {
       repeats: 'None',
       summary: '',
       assignedUsers: [],
-    })
+    });
 
     const checks = ref({
       assignedUsers: true,
       titleEmpty: false,
       dateAndTime: true
-    })
+    });
 
-    const taskToast = ref(null)
+    const taskToast = ref(null);
 
     const errorMessage = null;
 
@@ -109,23 +109,23 @@ export default {
 
     const addTask = async () => {
       if(taskToAdd.value.assignedUsers.length === 0){
-        checks.value.assignedUsers = false
+        checks.value.assignedUsers = false;
         return;
       }
-      else{checks.value.assignedUsers = true}
+      else{checks.value.assignedUsers = true;}
       
       if(taskToAdd.value.title === ''){
-        checks.value.titleEmpty = true
+        checks.value.titleEmpty = true;
         return;
       }
-      else{checks.value.titleEmpty = false}
+      else{checks.value.titleEmpty = false;}
 
       if(taskToAdd.value.date === '' || taskToAdd.value.time === ''){
-        checks.value.dateAndTime = false
+        checks.value.dateAndTime = false;
         return;
       }
       else{
-        checks.value.dateAndTime = true
+        checks.value.dateAndTime = true;
       }
 
 
@@ -137,22 +137,22 @@ export default {
           repeats: taskToAdd.value.repeats,
           summary: taskToAdd.value.summary
         }
-        const response = await axios.post(`http://localhost:5118/D&D/tasks`, task)
+        const response = await axios.post(`http://localhost:5118/D&D/tasks`, task);
 
+        //Promises allow the use of await
         if(response.data){
           const taskId = response.data.id || response.data;
           await Promise.all(
             taskToAdd.value.assignedUsers.map(user => 
               axios.post(`http://localhost:5118/D&D/tasks/${taskId}/user/${user}`),
             )
-          )
+          );
         }
         showToast()
         resetValues()
-  // må bruke promise siden await ikke fungerer i forEach
       }
       catch(error) {
-        console.error("Error adding task", error)
+        console.error("Error adding task", error);
         errorMessage = "Error adding task, please try again later.";
 
       }

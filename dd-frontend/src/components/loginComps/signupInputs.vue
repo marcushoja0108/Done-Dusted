@@ -51,10 +51,8 @@ export default {
                 };
                 await axios.post(`http://localhost:5118/D&D/users`, newUser,
                     { headers: {"Content-Type": "application/json"}}
-                );
-    
-                console.log("User registered")
-                await login(newUser)
+                )
+                await login(newUser);
             }
             catch(error){
                 errorMessage ="Registration failed, please try again later";
@@ -62,6 +60,7 @@ export default {
             }
         }
 
+        //logs in after signup
         const login = async (newUser) => {
             try {
                 const user = { UserName: newUser.userName, Password: newUser.passwordHash}
@@ -88,8 +87,7 @@ export default {
 
             }
             catch(error){
-                errorMessage.value = "Wrong username or password";
-                console.log("Wrong username or password")
+                errorMessage.value = "Error logging in, please try again later"
                 console.error(error);
             }
         };

@@ -1,4 +1,4 @@
-# dd-frontend
+# Done & Dusted, Task management
 
 ## Project setup
 ```

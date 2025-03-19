@@ -1,7 +1,7 @@
 <template>
 <div>
-    <div class="card text-center">
-        <div v-if="!task.done && !task.missed" class="card-header">
+    <div class="card text-center bg-light">
+        <div v-if="!task.done && !task.missed" class="card-header bg-info fs-5">
             Upcoming task
         </div>
         <div v-else-if="task.done" class="card-header bg-success text-white fs-5 fw-bold">
@@ -53,10 +53,10 @@ export default {
             let timeToChange = '';
 
             if(!props.task.doneDate){
-                timeToChange = props.task.doTime
+                timeToChange = props.task.doTime;
             }
             else{
-                timeToChange = props.task.doneTime
+                timeToChange = props.task.doneTime;
             }
             return new Date(`2000-01-01T${timeToChange}`).toLocaleTimeString(undefined, {
                 hour: "2-digit",
@@ -68,11 +68,11 @@ export default {
         const showModal = ref(false);
         
         const toggleModal = () => {
-            showModal.value = !showModal.value
+            showModal.value = !showModal.value;
         }
 
         const refreshTask = async (updatedTask) => {
-            props.task = updatedTask
+            props.task = updatedTask;
         }
 
         return {showModal, toggleModal, shortDate, shortTime, refreshTask}
