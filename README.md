@@ -1,4 +1,4 @@
-
+[Done & Dusted Home screen](Assets/DD-screenshot.PNG)
 # Done & Dusted, Task management
 
 Done & Dusted is a task management website designed for tracking both recurring and one-off tasks. Users can assign tasks to themselves or others, with a homepage displaying upcoming tasks and additional pages for adding, tracking repeating tasks, and viewing completed ones. The site uses JWT for authentication, keeping users logged in for 60 minutes before requiring re-authentication.
