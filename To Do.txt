@@ -1,9 +1,0 @@
-
-*  Refactor og trekk ut egne komponenter
-
-Bugs
-- hvis man velger ny date før ny time vil date nullstille seg igjen. Må velge time først.
-
-
-Sett opp flyt diagram
-draw.io 

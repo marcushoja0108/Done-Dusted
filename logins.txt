@@ -1,6 +1,0 @@
-id	name		password
-1	Alice		1111
-2	Bob		2222
-3	Charlie		3333
-5	testuser	testpassword
-6	John		0000
